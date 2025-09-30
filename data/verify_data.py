@@ -39,18 +39,26 @@ for c in ["Gls", "Ast", "MP", "Min"]:
         df[c] = pd.to_numeric(df[c], errors="coerce")
         df[c] = df[c].fillna(0)
 
-# ------------------| Valeurs aberrantes |------------------
+# ------------------| Valeurs aberrantes (basé sur les records de la saison 23/24) |------------------
 
-num_cols = df.select_dtypes(include=["number"]).columns
-for c in num_cols:
-    q1 = df[c].quantile(0.25)
-    q3 = df[c].quantile(0.75)
-    iqr = q3 - q1
-    if pd.notna(iqr) and iqr != 0:
-        lower, upper = q1 - 1.5*iqr, q3 + 1.5*iqr
-        outliers = ((df[c] < lower) | (df[c] > upper)).sum()
-        if outliers:
-            print(f"Outliers possibles pour {c} :", int(outliers))
+record_limits = {
+    "Age": 40,
+    "Gls": 36,
+    "Ast": 14,
+    "G+A": 44,
+    "CrdY": 17,
+    "xG": 31,
+}
+
+for col, vmax in record_limits.items():
+    if col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+        nb_out = (df[col] > vmax).sum()
+        if nb_out:
+            print(f"Outliers (>{vmax}) pour {col} :", int(nb_out))
+        df[col] = df[col].clip(upper=vmax)
+
+# ------------------| Corrections évidentes |------------------
 
 for c in ["Gls", "Ast", "MP", "Min"]:
     if c in df.columns:
