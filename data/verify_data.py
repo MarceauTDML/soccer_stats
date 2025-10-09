@@ -2,6 +2,19 @@ import pandas as pd
 import numpy as np
 
 def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+# ------------------| Colonnes numériques à forcer |------------------
+    numeric_cols = [
+        'MP','Starts','Min','90s','Gls','Ast','G+A','G-PK','PK','PKatt','CrdY','CrdR',
+        'xG','npxG','xAG','npxG+xAG','PrgC','PrgP','PrgR','Gls_90','Ast_90','G+A_90',
+        'G-PK_90','G+A-PK_90','xG_90','xAG_90','xG+xAG_90','npxG_90','npxG+xAG_90','Age'
+    ]
+
+    for col in [c for c in numeric_cols if c in df.columns]:
+        df[col] = pd.to_numeric(
+            df[col].astype(str).str.extract(r"(\d+\.?\d*)")[0],
+            errors="coerce"
+        )
+
 # ------------------| Doublons |------------------
     dup_exact = df.duplicated().sum()
     print("Doublons exacts :", dup_exact)
@@ -57,7 +70,6 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             df[c] = df[c].clip(lower=0)
 
     if "Age" in df.columns:
-        df["Age"] = pd.to_numeric(df["Age"], errors="coerce")
         df.loc[(df["Age"] < 15) | (df["Age"] > 50), "Age"] = np.nan
 
     return df
