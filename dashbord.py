@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from data.verify_data import clean_dataframe
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -16,25 +17,6 @@ h2{color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px}h3{color:#a
 .stButton>button{background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);color:white;border-radius:20px;padding:10px 25px;font-weight:bold;border:none;box-shadow:0 4px 6px rgba(0,0,0,0.2)}
 .stButton>button:hover{transform:translateY(-2px);box-shadow:0 6px 8px rgba(0,0,0,0.3)}
 </style>""", unsafe_allow_html=True)
-
-# Fonction de nettoyage optimisée
-def clean_dataframe(df):
-    df = df.dropna(how='all').drop_duplicates(subset=['Player'], keep='first')
-    
-    numeric_cols = ['MP','Starts','Min','90s','Gls','Ast','G+A','G-PK','PK','PKatt','CrdY','CrdR',
-                    'xG','npxG','xAG','npxG+xAG','PrgC','PrgP','PrgR','Gls_90','Ast_90','G+A_90',
-                    'G-PK_90','G+A-PK_90','xG_90','xAG_90','xG+xAG_90','npxG_90','npxG+xAG_90','Age']
-    
-    for col in numeric_cols:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
-    
-    text_cols = ['Player','Nation','Pos','Squad','Comp']
-    for col in text_cols:
-        if col in df.columns:
-            df[col] = df[col].fillna('Unknown').astype(str).str.strip()
-    
-    return df[(df['Player'] != 'Unknown') & (df['Player'] != '')]
 
 # Fonction pour créer des graphiques
 def create_plot(data, chart_type, **kwargs):
