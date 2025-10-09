@@ -36,11 +36,11 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 # ------------------| Valeurs aberrantes |------------------
     record_limits = {
         "Age": 40,
-        "Gls": 36,
-        "Ast": 14,
-        "G+A": 44,
+        "Gls": 73,
+        "Ast": 21,
+        "G+A": 80,
         "CrdY": 17,
-        "xG": 31,
+        "xG": 34,
     }
 
     for col, vmax in record_limits.items():
