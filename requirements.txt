@@ -3,3 +3,6 @@ pandas
 plotly.express
 plotly.graph_objects
 sklearn
+numpy
+matplotlib
+seaborn

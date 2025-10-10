@@ -40,6 +40,8 @@ with st.sidebar:
             
             with st.spinner("🧹 Nettoyage en cours..."):
                 df = clean_dataframe(df_original)
+                for msg in (df.attrs.get("errors") or []):
+                    st.warning(msg)
             
             st.success("✅ Nettoyage terminé!")
             
